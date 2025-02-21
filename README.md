@@ -18,7 +18,7 @@ We got the OG transformer vibes here — splitting the embedding into `num_heads
 Q = XW^Q, \quad K = XW^K, \quad V = XW^V
 ```
 
-where \(X \in \mathbb{R}^{L \times B \times d}\) (\(L\): seq_len, \(B\): batch_size, \(d\): embed_dim).
+where ```math X \in \mathbb{R}^{L \times B \times d} ``` (```math L ```: seq_len, ```math B ```: batch_size, ```math d ```: embed_dim).
 Heads run in parallel because we like that speed ⏩.
 
 ---
@@ -30,7 +30,7 @@ We compute:
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
 ```
 
-with \(M\) as the attention mask. The scaling by \(\sqrt{d_k}\) prevents that “too spicy” softmax explosion. 🌶️
+with ```math M ``` as the attention mask. The scaling by ```math \sqrt{d_k} ``` prevents that “too spicy” softmax explosion. 🌶️
 
 ---
 
@@ -41,7 +41,7 @@ This ain’t your regular attention layer. We dynamically score each token type:
 P(\text{token\_type}) = \text{softmax}(XW^{\text{type}})
 ```
 
-where \(W^{\text{type}}\) maps embeddings into a \(\mathbb{R}^{d \times 3}\) space — representing our holy trinity:
+where ```math W^{\text{type}} ``` maps embeddings into a ```math \mathbb{R}^{d \times 3} ``` space — representing our holy trinity:
 1. **Global** (Yo, I attend to everything) 🌎
 2. **Local** (Just vibin’ with the neighborhood) 🏡
 3. **Sliding Window** (Rollin' through time, one frame at a time) 🎞️
@@ -49,7 +49,7 @@ where \(W^{\text{type}}\) maps embeddings into a \(\mathbb{R}^{d \times 3}\) spa
 ---
 
 ## 🏗️ **Dynamic Mask Construction**
-Based on token probs, we build the attention mask \(M\):
+Based on token probs, we build the attention mask ```math M ```:
 
 - **Global Tokens**:
   ```math
@@ -86,7 +86,7 @@ This mask keeps the attention focused, efficient, and context-aware, like a well
 
 ### `forward()` — *Where the magic happens* ✨
 1. **Projection**: Compute Q, K, V from inputs.
-2. **Reshaping**: Turn \(B, L, D\) into \(B \times H, L, d_h\).
+2. **Reshaping**: Turn ```math B, L, D ``` into ```math B \times H, L, d_h ```.
 3. **Token Typing**: Predict token types dynamically:
 
    ```math
@@ -111,7 +111,7 @@ Executes the OG attention formula:
 \alpha_{ij} = \frac{\exp\left(\frac{(QK^T)_{ij}}{\sqrt{d_k}}\right)}{\sum_j \exp\left(\frac{(QK^T)_{ij}}{\sqrt{d_k}}\right)}
 ```
 
-Multiplies by \(V\) to get the final output:
+Multiplies by ```math V ``` to get the final output:
 
 ```math
 \text{Output} = \alpha V
