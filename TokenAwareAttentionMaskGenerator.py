@@ -26,15 +26,6 @@ class AttentionMaskGenerator(nn.Module):
         self.attention_score_layer = nn.Linear(128, num_token_types) # Assuming input tensor size of 128
 
     def forward(self, input_tensor, token_types):
-        """
-        Args:
-            input_tensor: Tensor of shape (batch_size, seq_len, input_dim)
-            token_types: Tensor of shape (batch_size, seq_len), each element represents
-                the index of the selected token type
-
-        Returns:
-            attention_mask: Tensor of shape (batch_size, num_kv_heads, seq_len, seq_len)
-        """
         batch_size, seq_len, _ = input_tensor.size()
 
         # 1. Generate logits for each token type
