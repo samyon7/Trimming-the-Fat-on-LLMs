@@ -14,9 +14,9 @@ Let’s break this down mathematically and keep it 💯 academic yet chill.
 ### 🔥 Multihead Self-Attention (MHA)
 We got the OG transformer vibes here — splitting the embedding into `num_heads` partitions. For each head:
 
-$$
+```math
 Q = XW^Q, \quad K = XW^K, \quad V = XW^V
-$$
+```
 
 where \(X \in \mathbb{R}^{L \times B \times d}\) (\(L\): seq_len, \(B\): batch_size, \(d\): embed_dim).
 Heads run in parallel because we like that speed ⏩.
@@ -26,9 +26,9 @@ Heads run in parallel because we like that speed ⏩.
 ### 🧠 **Scaled Dot-Product Attention**
 We compute:
 
-$$
+```math
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}} + M\right)V
-$$
+```
 
 with \(M\) as the attention mask. The scaling by \(\sqrt{d_k}\) prevents that “too spicy” softmax explosion. 🌶️
 
@@ -37,9 +37,9 @@ with \(M\) as the attention mask. The scaling by \(\sqrt{d_k}\) prevents that �
 ## 🚀 **But Wait... We Got NAtS!**
 This ain’t your regular attention layer. We dynamically score each token type:
 
-$$
+```math
 P(\text{token\_type}) = \text{softmax}(XW^{\text{type}})
-$$
+```
 
 where \(W^{\text{type}}\) maps embeddings into a \(\mathbb{R}^{d \times 3}\) space — representing our holy trinity:
 1. **Global** (Yo, I attend to everything) 🌎
@@ -52,19 +52,16 @@ where \(W^{\text{type}}\) maps embeddings into a \(\mathbb{R}^{d \times 3}\) spa
 Based on token probs, we build the attention mask \(M\):
 
 - **Global Tokens**:
-
   ```math
   M_{i,j} = 0 \quad \forall j
   ```
 
 - **Local Tokens**:
-
   ```math
   M_{i,j} = -\infty \quad \text{if } j < i
   ```
 
 - **Sliding Window Tokens (window=3)**:
-
   ```math
   M_{i,j} =
   \begin{cases}
@@ -92,9 +89,9 @@ This mask keeps the attention focused, efficient, and context-aware, like a well
 2. **Reshaping**: Turn \(B, L, D\) into \(B \times H, L, d_h\).
 3. **Token Typing**: Predict token types dynamically:
 
-   $$
+   ```math
    P(t) = \text{softmax}(XW^{\text{type}})
-   $$
+   ```
 
 4. **Dynamic Masking**: Generate attention mask via `construct_nats_attn_mask()`.
 5. **Scaled Dot-Product**: Compute attention and apply dropout.
@@ -110,15 +107,15 @@ This function loops through each token and dynamically assigns who it can attend
 ### `scaled_dot_product_attention()` — *Classic transformer math* 🧮
 Executes the OG attention formula:
 
-$$
+```math
 \alpha_{ij} = \frac{\exp\left(\frac{(QK^T)_{ij}}{\sqrt{d_k}}\right)}{\sum_j \exp\left(\frac{(QK^T)_{ij}}{\sqrt{d_k}}\right)}
-$$
+```
 
 Multiplies by \(V\) to get the final output:
 
-$$
+```math
 \text{Output} = \alpha V
-$$
+```
 
 ---
 
