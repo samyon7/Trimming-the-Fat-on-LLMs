@@ -52,23 +52,26 @@ where \(W^{\text{type}}\) maps embeddings into a \(\mathbb{R}^{d \times 3}\) spa
 Based on token probs, we build the attention mask \(M\):
 
 - **Global Tokens**:
-  $$
+
+  ```math
   M_{i,j} = 0 \quad \forall j
-  $$
+  ```
 
 - **Local Tokens**:
-  $$
+
+  ```math
   M_{i,j} = -\infty \quad \text{if } j < i
-  $$
+  ```
 
 - **Sliding Window Tokens (window=3)**:
-  $$
+
+  ```math
   M_{i,j} =
   \begin{cases}
   0 & \text{if } |i-j| \leq 3 \\
   -\infty & \text{otherwise}
   \end{cases}
-  $$
+  ```
 
 This mask keeps the attention focused, efficient, and context-aware, like a well-tuned Markov chain 🔗.
 
@@ -130,5 +133,3 @@ $$
 This code implements a multihead attention mechanism that doesn’t just blindly attend everywhere. Instead, it **learns** what matters, dynamically shifting between global, local, and sliding-window attention modes.
 
 Special credits for my brother and my friend, Jo. Dani and Wanto
-
----
